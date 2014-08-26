@@ -19,3 +19,10 @@ Jetzt: template.settings.templateType = sub
 
 Bisher: template.templateType = main
 Jetzt: template.settings.templateType = main
+
+## Änderungen im TSconfig
+
+ggf. folgende Zeilen im PageTSconfig auskommentieren
+
+// TCEFORM.pages.tx_rlmptmplselector_main_tmpl.disabled = 1
+// TCEFORM.pages.tx_rlmptmplselector_ca_tmpl.removeItems = 0
