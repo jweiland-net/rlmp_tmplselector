@@ -24,11 +24,12 @@ namespace JWeiland\RlmpTmplselector\Controller;
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
 /**
  * Plugin 'Template selector' for the 'rlmp_tmplselector' extension.
  */
-class TemplateSelectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
+class TemplateSelectorController extends ActionController
 {
     /**
      * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
@@ -110,10 +111,10 @@ class TemplateSelectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\Actio
                 if (strrpos($relPath, '/') != strlen($relPath) - 1) {
                     $relPath .= '/';
                 }
-                // get absolute filepath:
+                // get absolute filePath:
                 $absFilePath = GeneralUtility::getFileAbsFileName($relPath.$templateFile);
                 if ($absFilePath && @is_file($absFilePath)) {
-                    $content = GeneralUtility::getURL($absFilePath);
+                    $content = GeneralUtility::getUrl($absFilePath);
                     return $content;
                 }
             }
@@ -143,5 +144,6 @@ class TemplateSelectorController extends \TYPO3\CMS\Extbase\Mvc\Controller\Actio
             $content = $this->contentObject->TEMPLATE($lConf);
             return $content;
         }
+        return '';
     }
 }
