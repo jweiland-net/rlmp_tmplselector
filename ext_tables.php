@@ -9,7 +9,12 @@ if (!defined('TYPO3_MODE')) {
     'RLMP Template Selector'
 );
 
-$extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('rlmp_tmplselector');
+if (version_compare(TYPO3_branch, '7.6', '>')) {
+    $extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::siteRelPath('rlmp_tmplselector');
+} else {
+    $extRelPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extRelPath('rlmp_tmplselector');
+}
+
 $tempColumns = array (
     'tx_rlmptmplselector_main_tmpl' => array (
         'exclude' => 1,
@@ -25,7 +30,7 @@ $tempColumns = array (
                 ),
             ),
             'itemsProcFunc' => 'JWeiland\\RlmpTmplselector\\Tca\\AddFilesToSel->main',
-        )
+        ),
     ),
     'tx_rlmptmplselector_ca_tmpl' => array (
         'exclude' => 1,
@@ -41,7 +46,7 @@ $tempColumns = array (
                 ),
             ),
             'itemsProcFunc' => 'JWeiland\\RlmpTmplselector\\Tca\\AddFilesToSelCa->main',
-        )
+        ),
     ),
 );
 

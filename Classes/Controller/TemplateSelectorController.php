@@ -1,30 +1,21 @@
 <?php
 namespace JWeiland\RlmpTmplselector\Controller;
 
-/***************************************************************
-*  Copyright notice
-*
-*  (c) 2014 Stefan Froemken (projects@jweiland.net)
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
 
 /**
  * Plugin 'Template selector' for the 'rlmp_tmplselector' extension.
@@ -32,7 +23,7 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 class TemplateSelectorController extends ActionController
 {
     /**
-     * @var \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
+     * @var ContentObjectRenderer
      */
     protected $contentObject;
 
@@ -89,20 +80,20 @@ class TemplateSelectorController extends ActionController
             // Getting the 'type' from the input TypoScript configuration:
             switch ((string)$this->settings['templateType']) {
                 case 'sub':
-                    $templateFile = $GLOBALS['TSFE']->page['tx_rlmptmplselector_ca_tmpl'];
+                    $templateFile = trim($GLOBALS['TSFE']->page['tx_rlmptmplselector_ca_tmpl']);
                     $relPath = $tmplConf['templatePathSub'];
                     // Setting templateFile reference to the currently selected value - or the default if not set:
-                    if (! $templateFile) {
-                        $templateFile = $tmplConf['defaultTemplateFileNameSub'];
+                    if (empty($templateFile)) {
+                        $templateFile = ($tmplConf['defaultTemplateFileNameSub']);
                     }
                     break;
                 case 'main':
                 default:
-                    $templateFile = $GLOBALS['TSFE']->page['tx_rlmptmplselector_main_tmpl'];
+                    $templateFile = trim($GLOBALS['TSFE']->page['tx_rlmptmplselector_main_tmpl']);
                     $relPath = $tmplConf['templatePathMain'];
                     // Setting templateFile reference to the currently selected value - or the default if not set:
-                    if (! $templateFile) {
-                        $templateFile = $tmplConf['defaultTemplateFileNameMain'];
+                    if (empty($templateFile)) {
+                        $templateFile = trim($tmplConf['defaultTemplateFileNameMain']);
                     }
                     break;
             }
@@ -114,8 +105,7 @@ class TemplateSelectorController extends ActionController
                 // get absolute filePath:
                 $absFilePath = GeneralUtility::getFileAbsFileName($relPath.$templateFile);
                 if ($absFilePath && @is_file($absFilePath)) {
-                    $content = GeneralUtility::getUrl($absFilePath);
-                    return $content;
+                    return GeneralUtility::getUrl($absFilePath);
                 }
             }
         }
@@ -125,24 +115,27 @@ class TemplateSelectorController extends ActionController
             // Getting the 'type' from the input TypoScript configuration:
             switch ((string)$this->settings['templateType']) {
                 case 'sub':
-                    $templateObjectNr = $GLOBALS['TSFE']->page['tx_rlmptmplselector_ca_tmpl'];
-                    if (!$templateObjectNr) {
-                        $templateObjectNr = $tmplConf['defaultTemplateObjectSub'];
+                    $templateObjectNr = trim($GLOBALS['TSFE']->page['tx_rlmptmplselector_ca_tmpl']);
+                    if (empty($templateObjectNr)) {
+                        $templateObjectNr = trim($tmplConf['defaultTemplateObjectSub']);
                     }
                     break;
                 case 'main':
                 default:
-                    $templateObjectNr = $GLOBALS['TSFE']->page['tx_rlmptmplselector_main_tmpl'];
-                    if (!$templateObjectNr) {
-                        $templateObjectNr = $tmplConf['defaultTemplateObjectMain'];
+                    $templateObjectNr = trim($GLOBALS['TSFE']->page['tx_rlmptmplselector_main_tmpl']);
+                    if (empty($templateObjectNr)) {
+                        $templateObjectNr = trim($tmplConf['defaultTemplateObjectMain']);
                     }
                     break;
             }
 
             // Parse the template
             $lConf = &$tmplConf['templateObjects.'][(string)$this->settings['templateType'] . '.'][$templateObjectNr . '.'];
-            $content = $this->contentObject->TEMPLATE($lConf);
-            return $content;
+            if (version_compare(TYPO3_branch, '6.2', '>')) {
+                return $this->contentObject->render($this->contentObject->getContentObject('TEMPLATE'), $lConf);
+            } else {
+                return $this->contentObject->TEMPLATE($lConf);
+            }
         }
         return '';
     }

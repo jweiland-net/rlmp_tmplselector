@@ -1,28 +1,18 @@
 <?php
 namespace JWeiland\RlmpTmplselector\Tca;
 
-/***************************************************************
-*  Copyright notice
-*
-*  (c) 2014 Stefan Froemken (projects@jweiland.net)
-*  All rights reserved
-*
-*  This script is part of the TYPO3 project. The TYPO3 project is
-*  free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  The GNU General Public License can be found at
-*  http://www.gnu.org/copyleft/gpl.html.
-*
-*  This script is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU General Public License for more details.
-*
-*  This copyright notice MUST APPEAR in all copies of the script!
-***************************************************************/
+/*
+ * This file is part of the TYPO3 CMS project.
+ *
+ * It is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License, either version 2
+ * of the License, or any later version.
+ *
+ * For the full copyright and license information, please read the
+ * LICENSE.txt file that was distributed with this source code.
+ *
+ * The TYPO3 project - inspiring people to share!
+ */
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -31,20 +21,35 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class AddFilesToSel
 {
-
+    /**
+     * @var string
+     */
     protected $dir = 'templatePathMain';
+    
+    /**
+     * @var string
+     */
     protected $branch = 'main.';
+    
+    /**
+     * @var string
+     */
     protected $getParams = '';
+    
+    /**
+     * @var array
+     */
     protected $getParams_arrayKeys = array();
 
     /**
      * Manipulating the input array, $params, adding new selectorbox items.
      *
-     * @param array $params: Parameters of the user function caller
-     * @param object $pObj: Reference to the parent object calling this function
+     * @param array $params
+     * @param object $parentObject
+     *
      * @return void The result is in the manipulated $params array
      */
-    public function main(&$params, &$pObj)
+    public function main(&$params, $parentObject)
     {
         $thePageId = $params['row']['uid'];
         if (!is_numeric($thePageId)) {
@@ -63,11 +68,10 @@ class AddFilesToSel
         $template->runThroughTemplates($rootLine, 0);
         $template->generateConfig();
 
-        // GETTING configuration for the extension:
-        $confarray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rlmp_tmplselector']);
+        $extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rlmp_tmplselector']);
 
         // Use external HTML template files:
-        if ($confarray['templateMode'] === 'file') {
+        if ($extConf['templateMode'] === 'file') {
             // Finding value for the path containing the template files
             $readPath = GeneralUtility::getFileAbsFileName($template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'][$this->dir]);
             // If that direcotry is valid, is a directory then select files in it:
@@ -92,8 +96,8 @@ class AddFilesToSel
                     $selectorBoxItem_title = trim($titleTagContent . ' (' . basename($htmlFilePath) . ')');
 
                     // Trying to look up an image icon for the template
-                    $fI = GeneralUtility::split_fileref($htmlFilePath);
-                    $testImageFilename = $readPath . $fI['filebody'] . '.gif';
+                    $fileParts = GeneralUtility::split_fileref($htmlFilePath);
+                    $testImageFilename = $readPath . $fileParts['filebody'] . '.gif';
                     if (@is_file($testImageFilename)) {
                         $selectorBoxItem_icon = '../' . substr($testImageFilename, strlen(PATH_site));
                     }
@@ -109,7 +113,7 @@ class AddFilesToSel
         }
 
         // Don't use external files - do it the TS way instead
-        if ($confarray['templateMode'] === 'ts') {
+        if ($extConf['templateMode'] === 'ts') {
             // Finding value for the path containing the template files
             $readPath = GeneralUtility::getFileAbsFileName('uploads/tf/');
             $tmplObjects = $template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.']['templateObjects.'][$this->branch];
@@ -122,10 +126,10 @@ class AddFilesToSel
                     if ($v === 'TEMPLATE') {
                         if (is_array($tmplObjects[$k . '.']['tx_rlmptmplselector.'])) {
                             $selectorBoxItem_title=$tmplObjects[$k . '.']['tx_rlmptmplselector.']['title'];
-                            unset($selectorBoxItem_icon);
+                            $selectorBoxItem_icon = '';
 
-                            $fI = GeneralUtility::split_fileref(trim($tmplObjects[$k . '.']['tx_rlmptmplselector.']['imagefile']));
-                            $testImageFilename=$readPath . $fI['filebody'] . '.gif';
+                            $fileParts = GeneralUtility::split_fileref(trim($tmplObjects[$k . '.']['tx_rlmptmplselector.']['imagefile']));
+                            $testImageFilename=$readPath . $fileParts['filebody'] . '.gif';
                             if (@is_file($testImageFilename)) {
                                 $selectorBoxItem_icon = '../' . substr($testImageFilename, strlen(PATH_site));
                             }
@@ -143,9 +147,21 @@ class AddFilesToSel
     }
 }
 
+/**
+ * Class AddFilesToSelCa
+ *
+ * @package JWeiland\RlmpTmplselector\Tca
+ */
 class AddFilesToSelCa extends AddFilesToSel
 {
+    /**
+     * @var string
+     */
     protected $dir = 'templatePathSub';
+    
+    /**
+     * @var string
+     */
     protected $branch = 'sub.';
 }
 
