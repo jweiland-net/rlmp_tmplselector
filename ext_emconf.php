@@ -14,7 +14,7 @@ $EM_CONF[$_EXTKEY] = array (
     'title' => 'Page Template Selector',
     'description' => 'Select different templates for each page or tree branch. Easily works with either external html templates or pure TypoScript templates! Modified version based on the Modern Template Building tutorial.',
     'category' => 'be',
-    'version' => '2.2.0',
+    'version' => '2.2.1',
     'module' => '',
     'state' => 'stable',
     'uploadfolder' => 1,
@@ -27,7 +27,7 @@ $EM_CONF[$_EXTKEY] = array (
     'author_company' => 'jweiland.net',
     'constraints' => array (
         'depends' => array(
-            'typo3' => '6.2.0-7.99.99',
+            'typo3' => '6.2.0-8.99.99',
         ),
         'conflicts' => array (
         ),
