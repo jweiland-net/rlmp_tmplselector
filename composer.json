@@ -2,7 +2,6 @@
   "name": "jweiland/rlmp_tmplselector",
   "type": "typo3-cms-extension",
   "description": "Select different templates for each page or tree branch. Easily works with either external html templates or pure TypoScript templates! Modified version based on the Modern Template Building tutorial.",
-  "version": "2.2.1",
   "license": "GPL-2.0-or-later",
   "keywords": ["typo3", "TYPO3 CMS", "template", "selector"],
   "homepage": "http://www.jweiland.net",
