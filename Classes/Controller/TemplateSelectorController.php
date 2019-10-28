@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 namespace JWeiland\RlmpTmplselector\Controller;
 
 /*
@@ -15,9 +16,11 @@ namespace JWeiland\RlmpTmplselector\Controller;
  */
 
 use JWeiland\RlmpTmplselector\Configuration\ExtConf;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
@@ -42,33 +45,32 @@ class TemplateSelectorController extends ActionController
      * Reads the template-html file which is pointed to by the selector box on the page
      * and type parameter send through TypoScript.
      *
-     * @return string The HTML template
+     * @return string
      */
-    public function showAction()
+    public function showAction(): string
     {
         // GETTING configuration for the extension:
         $extConf = GeneralUtility::makeInstance(ExtConf::class);
-        $tmplConf = $GLOBALS['TSFE']->tmpl->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'];
-        $rootLine = $GLOBALS['TSFE']->rootLine;
+        $settings = $this->getSettings();
         $pageSelect = GeneralUtility::makeInstance(PageRepository::class);
 
         // If we should inherit the template from above the current page, search for the next selected template
         // and make it the default template
-        if (is_array($rootLine)) {
-            if ((int)$tmplConf['inheritMainTemplates'] === 1) {
-                foreach ($rootLine as $rootLinePage) {
+        if (is_array($this->getTypoScriptFrontendController()->rootLine)) {
+            if ((int)$settings['inheritMainTemplates'] === 1) {
+                foreach ($this->getTypoScriptFrontendController()->rootLine as $rootLinePage) {
                     $page = $pageSelect->getPage($rootLinePage['uid']);
                     if ($page['tx_rlmptmplselector_main_tmpl']) {
-                        $tmplConf['defaultTemplateFileNameMain'] = $tmplConf['defaultTemplateObjectMain'] = $page['tx_rlmptmplselector_main_tmpl'];
+                        $settings['defaultTemplateFileNameMain'] = $settings['defaultTemplateObjectMain'] = $page['tx_rlmptmplselector_main_tmpl'];
                         break;
                     }
                 }
             }
-            if ((int)$tmplConf['inheritSubTemplates'] === 1) {
-                foreach ($rootLine as $rootLinePage) {
+            if ((int)$settings['inheritSubTemplates'] === 1) {
+                foreach ($this->getTypoScriptFrontendController()->rootLine as $rootLinePage) {
                     $page = $pageSelect->getPage($rootLinePage['uid']);
                     if ($page['tx_rlmptmplselector_ca_tmpl']) {
-                        $tmplConf['defaultTemplateFileNameSub'] = $tmplConf['defaultTemplateObjectSub'] = $page['tx_rlmptmplselector_ca_tmpl'];
+                        $settings['defaultTemplateFileNameSub'] = $settings['defaultTemplateObjectSub'] = $page['tx_rlmptmplselector_ca_tmpl'];
                         break;
                     }
                 }
@@ -80,29 +82,26 @@ class TemplateSelectorController extends ActionController
             // Getting the 'type' from the input TypoScript configuration:
             switch ((string)$this->settings['templateType']) {
                 case 'sub':
-                    $templateFile = trim($GLOBALS['TSFE']->page['tx_rlmptmplselector_ca_tmpl']);
-                    $relPath = $tmplConf['templatePathSub'];
+                    $templateFile = trim($this->getTypoScriptFrontendController()->page['tx_rlmptmplselector_ca_tmpl']);
+                    $relPath = $settings['templatePathSub'];
                     // Setting templateFile reference to the currently selected value - or the default if not set:
                     if (empty($templateFile)) {
-                        $templateFile = ($tmplConf['defaultTemplateFileNameSub']);
+                        $templateFile = ($settings['defaultTemplateFileNameSub']);
                     }
                     break;
                 case 'main':
                 default:
-                    $templateFile = trim($GLOBALS['TSFE']->page['tx_rlmptmplselector_main_tmpl']);
-                    $relPath = $tmplConf['templatePathMain'];
+                    $templateFile = trim($this->getTypoScriptFrontendController()->page['tx_rlmptmplselector_main_tmpl']);
+                    $relPath = $settings['templatePathMain'];
                     // Setting templateFile reference to the currently selected value - or the default if not set:
                     if (empty($templateFile)) {
-                        $templateFile = trim($tmplConf['defaultTemplateFileNameMain']);
+                        $templateFile = trim($settings['defaultTemplateFileNameMain']);
                     }
                     break;
             }
             // if a value was found, we dare to continue
             if ($relPath) {
-                if (strrpos($relPath, '/') != strlen($relPath) - 1) {
-                    $relPath .= '/';
-                }
-                // get absolute filePath:
+                $relPath = rtrim($relPath, '/') . '/';
                 $absFilePath = GeneralUtility::getFileAbsFileName($relPath . $templateFile);
                 if ($absFilePath && @is_file($absFilePath)) {
                     return GeneralUtility::getUrl($absFilePath);
@@ -115,24 +114,39 @@ class TemplateSelectorController extends ActionController
             // Getting the 'type' from the input TypoScript configuration:
             switch ((string)$this->settings['templateType']) {
                 case 'sub':
-                    $templateObjectNr = trim($GLOBALS['TSFE']->page['tx_rlmptmplselector_ca_tmpl']);
+                    $templateObjectNr = trim($this->getTypoScriptFrontendController()->page['tx_rlmptmplselector_ca_tmpl']);
                     if (empty($templateObjectNr)) {
-                        $templateObjectNr = trim($tmplConf['defaultTemplateObjectSub']);
+                        $templateObjectNr = trim($settings['defaultTemplateObjectSub']);
                     }
                     break;
                 case 'main':
                 default:
-                    $templateObjectNr = trim($GLOBALS['TSFE']->page['tx_rlmptmplselector_main_tmpl']);
+                    $templateObjectNr = trim($this->getTypoScriptFrontendController()->page['tx_rlmptmplselector_main_tmpl']);
                     if (empty($templateObjectNr)) {
-                        $templateObjectNr = trim($tmplConf['defaultTemplateObjectMain']);
+                        $templateObjectNr = trim($settings['defaultTemplateObjectMain']);
                     }
                     break;
             }
 
             // Parse the template
-            $lConf = &$tmplConf['templateObjects.'][(string)$this->settings['templateType'] . '.'][$templateObjectNr . '.'];
-            return $this->contentObject->render($this->contentObject->getContentObject('TEMPLATE'), $lConf);
+            return $this->contentObject->render(
+                $this->contentObject->getContentObject('TEMPLATE'),
+                $settings['templateObjects.'][(string)$this->settings['templateType'] . '.'][$templateObjectNr . '.']
+            );
         }
         return '';
+    }
+
+    protected function getSettings(): array
+    {
+        return ArrayUtility::getValueByPath(
+            $this->getTypoScriptFrontendController()->tmpl->setup,
+            'tt_content./list./20./rlmptmplselector_templateselector./settings.'
+        );
+    }
+
+    protected function getTypoScriptFrontendController(): TypoScriptFrontendController
+    {
+        return $GLOBALS['TSFE'];
     }
 }
