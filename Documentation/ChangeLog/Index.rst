@@ -16,6 +16,8 @@ ChangeLog
 - Update documentation
 - Convert sxw documentation to new RST based documentation
 - Add configuration for Travis CI integration
+- You now can use GIF,JPG,JPEG,PNG,SVG as icon file for selector. Only TS configuration (EXT:...)
+- You can use FLUIDTEMPLATE as template configuration
 
 **Version 2.2.0**
 
