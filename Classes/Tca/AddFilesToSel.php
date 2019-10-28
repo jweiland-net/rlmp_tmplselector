@@ -14,6 +14,8 @@ namespace JWeiland\RlmpTmplselector\Tca;
  * The TYPO3 project - inspiring people to share!
  */
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Html\HtmlParser;
+use TYPO3\CMS\Core\TypoScript\ExtendedTemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -25,29 +27,27 @@ class AddFilesToSel
      * @var string
      */
     protected $dir = 'templatePathMain';
-    
+
     /**
      * @var string
      */
     protected $branch = 'main.';
-    
+
     /**
      * @var string
      */
     protected $getParams = '';
-    
+
     /**
      * @var array
      */
-    protected $getParams_arrayKeys = array();
+    protected $getParams_arrayKeys = [];
 
     /**
      * Manipulating the input array, $params, adding new selectorbox items.
      *
      * @param array $params
      * @param object $parentObject
-     *
-     * @return void The result is in the manipulated $params array
      */
     public function main(&$params, $parentObject)
     {
@@ -58,8 +58,7 @@ class AddFilesToSel
             $thePageId = $this->getParams_arrayKeys[0];
         }
 
-        /** @var \TYPO3\CMS\Core\TypoScript\ExtendedTemplateService $template */
-        $template = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\TypoScript\\ExtendedTemplateService'); // Defined global here!
+        $template = GeneralUtility::makeInstance(ExtendedTemplateService::class); // Defined global here!
         // Do not log time-performance information
         $template->tt_track = 0;
         $template->init();
@@ -74,18 +73,17 @@ class AddFilesToSel
         if ($extConf['templateMode'] === 'file') {
             // Finding value for the path containing the template files
             $readPath = GeneralUtility::getFileAbsFileName($template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'][$this->dir]);
-            // If that direcotry is valid, is a directory then select files in it:
+            // If that directory is valid, is a directory then select files in it:
             if (@is_dir($readPath)) {
                 //getting all HTML files in the directory:
                 $template_files = GeneralUtility::getFilesInDir($readPath, 'html,htm', 1, 1);
 
-                /** @var \TYPO3\CMS\Core\Html\HtmlParser $parseHTML */
-                $parseHTML = GeneralUtility::makeInstance('TYPO3\\CMS\\Core\\Html\\HtmlParser');
+                $parseHTML = GeneralUtility::makeInstance(HtmlParser::class);
 
                 // Traverse that array:
                 foreach ($template_files as $htmlFilePath) {
                     // Reset vars:
-                    $selectorBoxItem_icon='';
+                    $selectorBoxItem_icon = '';
 
                     // Reading the content of the template document ...
                     $content = GeneralUtility::getUrl($htmlFilePath);
@@ -103,11 +101,11 @@ class AddFilesToSel
                     }
 
                      // Finally add the new item:
-                    $params['items'][] = array(
+                    $params['items'][] = [
                         $selectorBoxItem_title,
                         basename($htmlFilePath),
                         $selectorBoxItem_icon
-                    );
+                    ];
                 }
             }
         }
@@ -120,12 +118,12 @@ class AddFilesToSel
             // Traverse template objects
             if (is_array($tmplObjects)) {
                 reset($tmplObjects);
-                while ($tmplObject = each($tmplObjects)) {
+                foreach ($tmplObjects as $tmplObject) {
                     $k = $tmplObject['key'];
                     $v = $tmplObject['value'];
                     if ($v === 'TEMPLATE') {
                         if (is_array($tmplObjects[$k . '.']['tx_rlmptmplselector.'])) {
-                            $selectorBoxItem_title=$tmplObjects[$k . '.']['tx_rlmptmplselector.']['title'];
+                            $selectorBoxItem_title = $tmplObjects[$k . '.']['tx_rlmptmplselector.']['title'];
                             $selectorBoxItem_icon = '';
 
                             $fileParts = GeneralUtility::split_fileref(trim($tmplObjects[$k . '.']['tx_rlmptmplselector.']['imagefile']));
@@ -134,11 +132,11 @@ class AddFilesToSel
                                 $selectorBoxItem_icon = '../' . substr($testImageFilename, strlen(PATH_site));
                             }
 
-                            $params['items'][] = array(
+                            $params['items'][] = [
                                 $selectorBoxItem_title,
                                 $k,
                                 $selectorBoxItem_icon
-                            );
+                            ];
                         }
                     }
                 }
@@ -149,8 +147,6 @@ class AddFilesToSel
 
 /**
  * Class AddFilesToSelCa
- *
- * @package JWeiland\RlmpTmplselector\Tca
  */
 class AddFilesToSelCa extends AddFilesToSel
 {
@@ -158,7 +154,7 @@ class AddFilesToSelCa extends AddFilesToSel
      * @var string
      */
     protected $dir = 'templatePathSub';
-    
+
     /**
      * @var string
      */
