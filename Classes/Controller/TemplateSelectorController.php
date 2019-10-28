@@ -101,7 +101,7 @@ class TemplateSelectorController extends ActionController
                     $relPath .= '/';
                 }
                 // get absolute filePath:
-                $absFilePath = GeneralUtility::getFileAbsFileName($relPath.$templateFile);
+                $absFilePath = GeneralUtility::getFileAbsFileName($relPath . $templateFile);
                 if ($absFilePath && @is_file($absFilePath)) {
                     return GeneralUtility::getUrl($absFilePath);
                 }
