@@ -4,13 +4,13 @@ if (!defined('TYPO3_MODE')) {
 }
 
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-    'JWeiland.' . $_EXTKEY,
+    'JWeiland.rlmp_tmplselector',
     'TemplateSelector',
-    array(
+    [
         'TemplateSelector' => 'show',
-    ),
+    ],
     // non-cacheable actions
-    array(
+    [
         'TemplateSelector' => '',
-    )
+    ]
 );
