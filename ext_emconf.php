@@ -10,7 +10,7 @@
  * writing. "version" and "dependencies" must not be touched!
  ***************************************************************/
 
-$EM_CONF[$_EXTKEY] = array (
+$EM_CONF[$_EXTKEY] = [
     'title' => 'Page Template Selector',
     'description' => 'Select different templates for each page or tree branch. Easily works with either external html templates or pure TypoScript templates! Modified version based on the Modern Template Building tutorial.',
     'category' => 'be',
@@ -25,13 +25,11 @@ $EM_CONF[$_EXTKEY] = array (
     'author' => 'Stefan Froemken',
     'author_email' => 'projects@jweiland.net',
     'author_company' => 'jweiland.net',
-    'constraints' => array (
-        'depends' => array(
-            'typo3' => '6.2.0-8.99.99',
-        ),
-        'conflicts' => array (
-        ),
-        'suggests' => array (
-        ),
-    ),
-);
+    'constraints' => [
+        'depends' => [
+            'typo3' => '8.7.0-9.5.99',
+        ],
+        'conflicts' => [],
+        'suggests' => [],
+    ],
+];
