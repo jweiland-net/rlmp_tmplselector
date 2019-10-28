@@ -6,7 +6,7 @@
 Contribute
 ==========
 
-Contribution to maps2 is very welcome.
+Contribution to rlmp_tmplselector is very welcome.
 
 If you wish to contribute, please follow these conventions:
 

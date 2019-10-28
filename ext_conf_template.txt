@@ -1,2 +1,2 @@
-# cat=basic/dims/a; type=options[TypoScript=ts, HTML-Template=file]; label=Template Selector Mode: You may use the Template Selector either with external HTML files or with pure TypoScript.
+# cat=basic; type=options[TypoScript=ts, HTML-Template=file]; label=LLL:EXT:rlmp_tmplselector/Resources/Private/Language/ExtConf.xlf:templateMode
 templateMode = file
