@@ -26,8 +26,8 @@ content. Just create some lines like these in the setup field of your root templ
 
 .. code-block:: typoscript
 
-    plugin.tx_rlmptmplselector_pi1.settings.templatePathMain = EXT:your_ext_key/Resources/Private/Templates/Main/
-    plugin.tx_rlmptmplselector_pi1.settings.templatePathSub = EXT:your_ext_key/Resources/Private/Templates/Sub/
+   tt_content.list.20.rlmptmplselector_templateselector.settings.templatePathMain = EXT:your_ext_key/Resources/Private/Templates/Main/
+   tt_content.list.20.rlmptmplselector_templateselector.settings.templatePathSub = EXT:your_ext_key/Resources/Private/Templates/Sub/
 
 You can add new templates just by putting them into the main/ and sub/  directory. All files
 with extension like ".htm" or ".html" will be recognized as a template file. Each template may

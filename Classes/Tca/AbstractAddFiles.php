@@ -13,6 +13,8 @@ namespace JWeiland\RlmpTmplselector\Tca;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+use JWeiland\RlmpTmplselector\Configuration\ExtConf;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Html\HtmlParser;
 use TYPO3\CMS\Core\TypoScript\ExtendedTemplateService;
@@ -71,10 +73,10 @@ abstract class AbstractAddFiles
         $template->runThroughTemplates($rootLine, 0);
         $template->generateConfig();
 
-        $extConf = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rlmp_tmplselector']);
+        $extConf = GeneralUtility::makeInstance(ExtConf::class);
 
         // Use external HTML template files:
-        if ($extConf['templateMode'] === 'file') {
+        if ($extConf->getTemplateMode() === 'file') {
             // Finding value for the path containing the template files
             $readPath = GeneralUtility::getFileAbsFileName(
                 $template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'][$this->dir]
@@ -117,7 +119,7 @@ abstract class AbstractAddFiles
         }
 
         // Don't use external files - do it the TS way instead
-        if ($extConf['templateMode'] === 'ts') {
+        if ($extConf->getTemplateMode() === 'ts') {
             // Finding value for the path containing the template files
             $readPath = GeneralUtility::getFileAbsFileName('uploads/tf/');
             $tmplObjects = $template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.']['templateObjects.'][$this->branch];
