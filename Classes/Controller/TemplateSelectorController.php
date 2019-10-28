@@ -16,6 +16,7 @@ namespace JWeiland\RlmpTmplselector\Controller;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Plugin 'Template selector' for the 'rlmp_tmplselector' extension.
@@ -28,9 +29,7 @@ class TemplateSelectorController extends ActionController
     protected $contentObject;
 
     /**
-     * initialize show action
-     *
-     * @return void
+     * Initialize show action
      */
     public function initializeShowAction()
     {
@@ -49,8 +48,7 @@ class TemplateSelectorController extends ActionController
         $confArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rlmp_tmplselector']);
         $tmplConf = $GLOBALS['TSFE']->tmpl->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'];
         $rootLine = $GLOBALS['TSFE']->rootLine;
-        /** @var \TYPO3\CMS\Frontend\Page\PageRepository $pageSelect */
-        $pageSelect = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
+        $pageSelect = GeneralUtility::makeInstance(PageRepository::class);
 
         // If we should inherit the template from above the current page, search for the next selected template
         // and make it the default template
@@ -131,11 +129,7 @@ class TemplateSelectorController extends ActionController
 
             // Parse the template
             $lConf = &$tmplConf['templateObjects.'][(string)$this->settings['templateType'] . '.'][$templateObjectNr . '.'];
-            if (version_compare(TYPO3_branch, '6.2', '>')) {
-                return $this->contentObject->render($this->contentObject->getContentObject('TEMPLATE'), $lConf);
-            } else {
-                return $this->contentObject->TEMPLATE($lConf);
-            }
+            return $this->contentObject->render($this->contentObject->getContentObject('TEMPLATE'), $lConf);
         }
         return '';
     }
