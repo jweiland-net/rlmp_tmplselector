@@ -100,7 +100,7 @@ class AddFilesToSel
                         $selectorBoxItem_icon = '../' . substr($testImageFilename, strlen(PATH_site));
                     }
 
-                     // Finally add the new item:
+                    // Finally add the new item:
                     $params['items'][] = [
                         $selectorBoxItem_title,
                         basename($htmlFilePath),
