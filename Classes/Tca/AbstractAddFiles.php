@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 namespace JWeiland\RlmpTmplselector\Tca;
 
 /*
@@ -67,35 +68,25 @@ abstract class AbstractAddFiles
             // If that directory is valid, is a directory then select files in it:
             if (@is_dir($readPath)) {
                 //getting all HTML files in the directory:
-                $template_files = GeneralUtility::getFilesInDir($readPath, 'html,htm', 1, 1);
-
-                $parseHTML = GeneralUtility::makeInstance(HtmlParser::class);
+                $templateFiles = GeneralUtility::getFilesInDir($readPath, 'html,htm', 1, 1);
 
                 // Traverse that array:
-                foreach ($template_files as $htmlFilePath) {
+                foreach ($templateFiles as $templateFilePath) {
                     // Reset vars:
-                    $selectorBoxItem_icon = '';
-
-                    // Reading the content of the template document ...
-                    $content = GeneralUtility::getUrl($htmlFilePath);
-                    // ... and extracting the content of the title-tags:
-                    $parts = $parseHTML->splitIntoBlock('title', $content);
-                    $titleTagContent = $parseHTML->removeFirstAndLastTag($parts[1]);
-                    // Setting the item label:
-                    $selectorBoxItem_title = trim($titleTagContent . ' (' . basename($htmlFilePath) . ')');
+                    $iconForSelectorBox = '';
 
                     // Trying to look up an image icon for the template
-                    $fileParts = GeneralUtility::split_fileref($htmlFilePath);
-                    $testImageFilename = $readPath . $fileParts['filebody'] . '.gif';
+                    $templateFileParts = GeneralUtility::split_fileref($templateFilePath);
+                    $testImageFilename = $readPath . $templateFileParts['filebody'] . '.gif';
                     if (@is_file($testImageFilename)) {
-                        $selectorBoxItem_icon = '../' . substr($testImageFilename, strlen(PATH_site));
+                        $iconForSelectorBox = '../' . substr($testImageFilename, strlen(PATH_site));
                     }
 
                     // Finally add the new item:
                     $params['items'][] = [
-                        $selectorBoxItem_title,
-                        basename($htmlFilePath),
-                        $selectorBoxItem_icon
+                        $this->buildTitleFromTemplateFile($templateFilePath),
+                        basename($templateFilePath),
+                        $iconForSelectorBox
                     ];
                 }
             }
@@ -103,36 +94,77 @@ abstract class AbstractAddFiles
 
         // Don't use external files - do it the TS way instead
         if ($extConf->getTemplateMode() === 'ts') {
-            // Finding value for the path containing the template files
-            $readPath = GeneralUtility::getFileAbsFileName('uploads/tf/');
-            $tmplObjects = $settings['templateObjects.'][$this->branch];
+            $contentObjects = $settings['templateObjects.'][$this->branch];
             // Traverse template objects
-            if (is_array($tmplObjects)) {
-                reset($tmplObjects);
-                foreach ($tmplObjects as $tmplObject) {
-                    $k = $tmplObject['key'];
-                    $v = $tmplObject['value'];
-                    if ($v === 'TEMPLATE') {
-                        if (is_array($tmplObjects[$k . '.']['tx_rlmptmplselector.'])) {
-                            $selectorBoxItem_title = $tmplObjects[$k . '.']['tx_rlmptmplselector.']['title'];
-                            $selectorBoxItem_icon = '';
-
-                            $fileParts = GeneralUtility::split_fileref(trim($tmplObjects[$k . '.']['tx_rlmptmplselector.']['imagefile']));
-                            $testImageFilename = $readPath . $fileParts['filebody'] . '.gif';
-                            if (@is_file($testImageFilename)) {
-                                $selectorBoxItem_icon = '../' . substr($testImageFilename, strlen(PATH_site));
-                            }
-
+            if (is_array($contentObjects)) {
+                reset($contentObjects);
+                foreach ($contentObjects as $key => $contentObject) {
+                    $key = (string)$key;
+                    // do not process Keys like "10."
+                    if (strpos($key, '.') !== false) {
+                        continue;
+                    }
+                    if (in_array($contentObject, ['TEMPLATE', 'FLUIDTEMPLATE'])) {
+                        $settings = $this->getTypoScriptSettings($contentObjects, $key);
+                        if (!empty($settings)) {
                             $params['items'][] = [
-                                $selectorBoxItem_title,
-                                $k,
-                                $selectorBoxItem_icon
+                                $settings['title'] ?? '[no title defined]',
+                                $key,
+                                $this->getIconPathByTypoScriptSettings($settings)
                             ];
                         }
                     }
                 }
             }
         }
+    }
+
+    protected function getTypoScriptSettings(array $contentObjects, string $contentObjectKey): array
+    {
+        try {
+            $settings = ArrayUtility::getValueByPath(
+                $contentObjects,
+                $contentObjectKey . './tx_rlmptmplselector.'
+            );
+        } catch (\RuntimeException $e) {
+            $settings = [];
+        }
+        return $settings;
+    }
+
+    protected function getIconPathByTypoScriptSettings(array $settings): string
+    {
+        $iconForSelectorBox = '';
+        if (
+            array_key_exists('imagefile', $settings)
+            && !empty($settings['imagefile'])
+        ) {
+            $iconFilePath = GeneralUtility::getFileAbsFileName(trim($settings['imagefile']));
+            $iconFileParts = GeneralUtility::split_fileref($iconFilePath);
+            if (
+                @is_file($iconFilePath)
+                && in_array($iconFileParts['fileext'], ['gif', 'jpg', 'jpeg', 'png', 'svg'], true)
+            ) {
+                $iconForSelectorBox = $iconFilePath;
+            }
+        }
+        return $iconForSelectorBox;
+    }
+
+    protected function buildTitleFromTemplateFile(string $templateFilePath): string
+    {
+        $htmlParser = GeneralUtility::makeInstance(HtmlParser::class);
+        $content = GeneralUtility::getUrl($templateFilePath);
+
+        // extract the content of the title-tags:
+        $titleParts = $htmlParser->splitIntoBlock('title', $content);
+        $titleTagContent = trim($htmlParser->removeFirstAndLastTag($titleParts[1]));
+
+        $title = basename($templateFilePath);
+        if ($titleTagContent) {
+            $title = sprintf('%s (%s)', $titleTagContent, $title);
+        }
+        return $title;
     }
 
     protected function getSettings(int $pageId): array
