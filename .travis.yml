@@ -1,0 +1,64 @@
+language: php
+
+jobs:
+  include:
+    - stage: test
+      php: "7.0"
+      env: TYPO3_VERSION=^8
+    - stage: test
+      php: "7.1"
+      env: TYPO3_VERSION=^8
+    - stage: test
+      php: "7.2"
+      env: TYPO3_VERSION=^8
+    - stage: test
+      php: "7.2"
+      env: TYPO3_VERSION=^9
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - parallel
+
+cache:
+  directories:
+    - "$HOME/.composer/cache"
+
+notifications:
+  slack:
+    rooms:
+      - secure: "hYuntOZDw8TNshWXBx7V79qdHC4H6BbCeEWk4CohGSHgClBbW7//saTw2dRkh4eDDj2ogYTRIQXdS/yy3RZdmvFT1RN71KiLiCDxt+FNqf6R7Q6qnwsW6B9uaNFUmS2uBtXF26fLCTYjPnK41rmFRu5DlEmcTFIZQ2dtMa6mMbCEJ6CEoFfFPdkrbey+Ac2Yy0kjp4ZgoZLu0lrjKaewxJhL4UgEXZ387s18WwbVh1EJ4Szt6HTdUkQlM99ZB6lqBipT80MluQvwlxE9uQgJpBPBVYeC2DNaTZDVWHSX8Afv1HZ3UHNF1sdrsGIegy1dEb6wGUEojQH5M7bQQGHz2TglP7SMzol8IwA84qUXFsNT4kihaWdeQDAs+qvfhDI9WQiBF/ZeBwHsobaoVM7KVX0e8Yok1H5gi+BCKYeXUiCTZVX6uaDDz37JweGaXMzVlOln82wVaqRPQJKwyJMhKTbW3mNkagWQAV3gKWAQfY0o/VIHm9plgEL/Fzx3/rH6MLYqKZiCJmTdXPLjdihVEB4b+rnq8DSrR80xG0ftsxNngpgN3rjFwTzbpJgc8tvHfc39iaFJycYr+0fs/co+CAt158F5seDtPsaHnNsX8ZzTd1640/vpuTSuChLU2yNvDiE5ERTe6nG7NNcMBPDESMnePJqZsRhe3rIInYF1GyM="
+
+before_install:
+  - if php -i | grep -q xdebug; then phpenv config-rm xdebug.ini; fi
+  - composer self-update
+
+install:
+  - >
+    composer config minimum-stability dev;
+    composer config prefer-stable true;
+  - while true; do echo "..."; sleep 60; done &
+  - composer require typo3/minimal=$TYPO3_VERSION
+  - kill %1
+  - mkdir -p .Build/public/typo3conf/ext/
+  - if [ ! -L .Build/public/typo3conf/ext/rlmp_tmplselector ]; then ln -snvf ../../../../. .Build/public/typo3conf/ext/rlmp_tmplselector; fi
+  - echo 'date.timezone = "Europe/Berlin"' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+  - git checkout composer.json
+  - export TYPO3_PATH_ROOT=$PWD/.Build/public
+
+script:
+  - >
+    echo;
+    echo "Running parallel";
+    echo;
+    echo;
+    find . -name \*.php ! -path "./.Build/*" | parallel --gnu php -d display_errors=stderr -l {} > /dev/null \;;
+
+  - >
+    echo;
+    echo "Running PHP Coding Standards Fixer checks";
+    echo;
+    echo;
+    .Build/bin/php-cs-fixer fix Classes --config=Build/.php_cs.php --dry-run --using-cache=no -v --diff;
