@@ -57,5 +57,4 @@ Extension Name
    Configuration/Index
    User/Index
    AdministratorManual/Index
-   DeveloperManual/Index
    ChangeLog/Index

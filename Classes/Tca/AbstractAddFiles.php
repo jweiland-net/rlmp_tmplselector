@@ -2,7 +2,7 @@
 namespace JWeiland\RlmpTmplselector\Tca;
 
 /*
- * This file is part of the TYPO3 CMS project.
+ * This file is part of the rlmp_tmplselector project.
  *
  * It is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, either version 2
@@ -19,19 +19,23 @@ use TYPO3\CMS\Core\TypoScript\ExtendedTemplateService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
- * Class/Function which manipulates the item-array for table/field pages_tx_rlmptmplselector_main_tmpl.
+ * Abstract class to add template files to various selectors in pages table.
  */
-class AddFilesToSel
+abstract class AbstractAddFiles
 {
     /**
+     * Override with "templatePathMain" or "templatePathSub"
+     *
      * @var string
      */
-    protected $dir = 'templatePathMain';
+    protected $dir = '';
 
     /**
+     * Override with "main." or "sub."
+     *
      * @var string
      */
-    protected $branch = 'main.';
+    protected $branch = '';
 
     /**
      * @var string
@@ -72,7 +76,9 @@ class AddFilesToSel
         // Use external HTML template files:
         if ($extConf['templateMode'] === 'file') {
             // Finding value for the path containing the template files
-            $readPath = GeneralUtility::getFileAbsFileName($template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'][$this->dir]);
+            $readPath = GeneralUtility::getFileAbsFileName(
+                $template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'][$this->dir]
+            );
             // If that directory is valid, is a directory then select files in it:
             if (@is_dir($readPath)) {
                 //getting all HTML files in the directory:
@@ -143,24 +149,4 @@ class AddFilesToSel
             }
         }
     }
-}
-
-/**
- * Class AddFilesToSelCa
- */
-class AddFilesToSelCa extends AddFilesToSel
-{
-    /**
-     * @var string
-     */
-    protected $dir = 'templatePathSub';
-
-    /**
-     * @var string
-     */
-    protected $branch = 'sub.';
-}
-
-if (defined('TYPO3_MODE') && $GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/rlmp_tmplselector/class.tx_rlmptmplselector_addfilestosel.php']) {
-    include_once($GLOBALS['TYPO3_CONF_VARS'][TYPO3_MODE]['XCLASS']['ext/rlmp_tmplselector/class.tx_rlmptmplselector_addfilestosel.php']);
 }

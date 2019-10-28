@@ -11,8 +11,11 @@ ChangeLog
 - Added TYPO3 9.5 compatibility
 - Add new Extension Icon as SVG
 - Move content of ext_tables.php to TCA/Overrides
-- Convert all array() to []
+- Convert array() to []
 - Use EXT: instead of relative paths with siteRelPath (deprecated)
+- Update documentation
+- Convert sxw documentation to new RST based documentation
+- Add configuration for Travis CI integration
 
 **Version 2.2.0**
 

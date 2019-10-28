@@ -6,6 +6,14 @@
 Installation
 ============
 
-You install the Page Template Selector like any other extension by downloading it from the
-extension repository (TER) and enabling it in the extension manager (EM). The extension manager
-will ask you two choose a mode for the template processing:
+The extension needs to be installed like any other extension of TYPO3 CMS:
+
+#. Visit ExtensionManager
+
+#. Switch over to `Get Extensions`
+
+#. Search for `rlmp_tmplselector`
+
+#. Install extension
+
+Alternative you can install this extension by composer: `composer require jweiland/rlmp_tmplselector`

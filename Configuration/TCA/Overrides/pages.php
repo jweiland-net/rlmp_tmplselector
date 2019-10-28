@@ -17,7 +17,7 @@ $tempColumns = [
                     'EXT:rlmp_tmplselector/Resources/Public/Icons/dummy_main.gif'
                 ],
             ],
-            'itemsProcFunc' => \JWeiland\RlmpTmplselector\Tca\AddFilesToSel::class . '->main',
+            'itemsProcFunc' => \JWeiland\RlmpTmplselector\Tca\AddMainFiles::class . '->main',
         ],
     ],
     'tx_rlmptmplselector_ca_tmpl' => [
@@ -33,7 +33,7 @@ $tempColumns = [
                     'EXT:rlmp_tmplselector/Resources/Public/Icons/dummy_ca.gif'
                 ],
             ],
-            'itemsProcFunc' => \JWeiland\RlmpTmplselector\Tca\AddFilesToSelCa::class . '->main',
+            'itemsProcFunc' => \JWeiland\RlmpTmplselector\Tca\AddContentAreaFiles::class . '->main',
         ],
     ],
 ];

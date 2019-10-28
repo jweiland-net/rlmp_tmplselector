@@ -18,7 +18,7 @@ especially makes sense when users are not allowed to touch the real template rec
 ability to change the layout of their page.
 
 I added some new features to the original extension which also allows you to use pure TypoScript
-templates instead of external HTML files. You should read the section in the tutorial to getter
+templates instead of external HTML files. You should read the section in the tutorial to get
 a better idea of how this extension works, since everything will be explained there right from the
 start. Nevertheless you can also use this extension without reading the tutorial, since the most
 important steps will be explained here, too.

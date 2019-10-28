@@ -1,7 +1,7 @@
-########################
-# jweiland.net MAPS2
+################################
+# jweiland.net rlmp_tmplselector
 # global ignore file
-########################
+################################
 
 # ignore generated documentation
 *GENERATED*

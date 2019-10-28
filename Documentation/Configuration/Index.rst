@@ -20,17 +20,16 @@ only work with either files or TypoScript objects.
 The external file way
 ---------------------
 
-If you prefer working with external HTML files (like described in the tutorial), this is the
-section you have to read. First thing you have to do is define the paths which will hold your
-templates of both the main and the sub content. Just create some lines like these in the setup
-field of your root template:
+If you prefer working with external HTML files, this is the section you have to read. First thing
+you have to do is define the paths which will hold your templates of both the main and the sub
+content. Just create some lines like these in the setup field of your root template:
 
 .. code-block:: typoscript
 
-    plugin.tx_rlmptmplselector_pi1.templatePathMain = fileadmin/templates/main/
-    plugin.tx_rlmptmplselector_pi1.templatePathSub = fileadmin/templates/sub/
+    plugin.tx_rlmptmplselector_pi1.settings.templatePathMain = EXT:your_ext_key/Resources/Private/Templates/Main/
+    plugin.tx_rlmptmplselector_pi1.settings.templatePathSub = EXT:your_ext_key/Resources/Private/Templates/Sub/
 
-You can add new templates just by putting them into the main/ and sub/  directory. Alle files
+You can add new templates just by putting them into the main/ and sub/  directory. All files
 with extension like ".htm" or ".html" will be recognized as a template file. Each template may
 be accompanied by an icon which will be shown in the template selector. It must have the same
 filename as the template file, with the extension ".gif" though. See the reference for
