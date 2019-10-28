@@ -6,6 +6,10 @@
 ChangeLog
 =========
 
+**Version 3.0.1**
+
+- Check result of removeFirstAndLastTag to be string
+
 **Version 3.0.0**
 
 - Added TYPO3 9.5 compatibility
