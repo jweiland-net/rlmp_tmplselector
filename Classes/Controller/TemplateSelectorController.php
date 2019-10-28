@@ -13,6 +13,8 @@ namespace JWeiland\RlmpTmplselector\Controller;
  *
  * The TYPO3 project - inspiring people to share!
  */
+
+use JWeiland\RlmpTmplselector\Configuration\ExtConf;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
@@ -45,7 +47,7 @@ class TemplateSelectorController extends ActionController
     public function showAction()
     {
         // GETTING configuration for the extension:
-        $confArray = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['rlmp_tmplselector']);
+        $extConf = GeneralUtility::makeInstance(ExtConf::class);
         $tmplConf = $GLOBALS['TSFE']->tmpl->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'];
         $rootLine = $GLOBALS['TSFE']->rootLine;
         $pageSelect = GeneralUtility::makeInstance(PageRepository::class);
@@ -74,7 +76,7 @@ class TemplateSelectorController extends ActionController
         }
 
         // Determine mode: If it is 'file', work with external HTML template files
-        if ($confArray['templateMode'] === 'file') {
+        if ($extConf->getTemplateMode() === 'file') {
             // Getting the 'type' from the input TypoScript configuration:
             switch ((string)$this->settings['templateType']) {
                 case 'sub':
@@ -109,7 +111,7 @@ class TemplateSelectorController extends ActionController
         }
 
         // Don't use external files - do it the TS way instead
-        if ($confArray['templateMode'] === 'ts') {
+        if ($extConf->getTemplateMode() === 'ts') {
             // Getting the 'type' from the input TypoScript configuration:
             switch ((string)$this->settings['templateType']) {
                 case 'sub':
