@@ -158,7 +158,7 @@ abstract class AbstractAddFiles
 
         // extract the content of the title-tags:
         $titleParts = $htmlParser->splitIntoBlock('title', $content);
-        $titleTagContent = trim($htmlParser->removeFirstAndLastTag($titleParts[1]));
+        $titleTagContent = trim($htmlParser->removeFirstAndLastTag($titleParts[1]) ?: '');
 
         $title = basename($templateFilePath);
         if ($titleTagContent) {
