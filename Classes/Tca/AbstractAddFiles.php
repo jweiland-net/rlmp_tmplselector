@@ -13,11 +13,11 @@ namespace JWeiland\RlmpTmplselector\Tca;
  *
  * The TYPO3 project - inspiring people to share!
  */
-
 use JWeiland\RlmpTmplselector\Configuration\ExtConf;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Html\HtmlParser;
 use TYPO3\CMS\Core\TypoScript\ExtendedTemplateService;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -55,32 +55,15 @@ abstract class AbstractAddFiles
      * @param array $params
      * @param object $parentObject
      */
-    public function main(&$params, $parentObject)
+    public function main(array &$params, $parentObject)
     {
-        $thePageId = $params['row']['uid'];
-        if (!is_numeric($thePageId)) {
-            $this->getParams = GeneralUtility::_GET('edit');
-            $this->getParams_arrayKeys = array_keys($this->getParams['pages']);
-            $thePageId = $this->getParams_arrayKeys[0];
-        }
-
-        $template = GeneralUtility::makeInstance(ExtendedTemplateService::class); // Defined global here!
-        // Do not log time-performance information
-        $template->tt_track = 0;
-        $template->init();
-        $rootLine = BackendUtility::BEgetRootLine($thePageId);
-        // This generates the constants/config + hierarchy info for the template.
-        $template->runThroughTemplates($rootLine, 0);
-        $template->generateConfig();
-
+        $settings = $this->getSettings($this->getPageId($params));
         $extConf = GeneralUtility::makeInstance(ExtConf::class);
 
         // Use external HTML template files:
         if ($extConf->getTemplateMode() === 'file') {
-            // Finding value for the path containing the template files
-            $readPath = GeneralUtility::getFileAbsFileName(
-                $template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.'][$this->dir]
-            );
+            // Read template files from configured path
+            $readPath = GeneralUtility::getFileAbsFileName($settings[$this->dir]);
             // If that directory is valid, is a directory then select files in it:
             if (@is_dir($readPath)) {
                 //getting all HTML files in the directory:
@@ -122,7 +105,7 @@ abstract class AbstractAddFiles
         if ($extConf->getTemplateMode() === 'ts') {
             // Finding value for the path containing the template files
             $readPath = GeneralUtility::getFileAbsFileName('uploads/tf/');
-            $tmplObjects = $template->setup['tt_content.']['list.']['20.']['rlmptmplselector_templateselector.']['settings.']['templateObjects.'][$this->branch];
+            $tmplObjects = $settings['templateObjects.'][$this->branch];
             // Traverse template objects
             if (is_array($tmplObjects)) {
                 reset($tmplObjects);
@@ -135,7 +118,7 @@ abstract class AbstractAddFiles
                             $selectorBoxItem_icon = '';
 
                             $fileParts = GeneralUtility::split_fileref(trim($tmplObjects[$k . '.']['tx_rlmptmplselector.']['imagefile']));
-                            $testImageFilename=$readPath . $fileParts['filebody'] . '.gif';
+                            $testImageFilename = $readPath . $fileParts['filebody'] . '.gif';
                             if (@is_file($testImageFilename)) {
                                 $selectorBoxItem_icon = '../' . substr($testImageFilename, strlen(PATH_site));
                             }
@@ -150,5 +133,40 @@ abstract class AbstractAddFiles
                 }
             }
         }
+    }
+
+    protected function getSettings(int $pageId): array
+    {
+        $templateService = $this->getTemplateServiceForPageId($pageId);
+        return ArrayUtility::getValueByPath(
+            $templateService->setup,
+            'tt_content./list./20./rlmptmplselector_templateselector./settings.'
+        );
+    }
+
+    protected function getPageId(array $params): int
+    {
+        $pageId = $params['row']['uid'];
+        if (!is_numeric($pageId)) {
+            $this->getParams = GeneralUtility::_GET('edit');
+            $this->getParams_arrayKeys = array_keys($this->getParams['pages']);
+            $pageId = $this->getParams_arrayKeys[0];
+        }
+        return (int)$pageId;
+    }
+
+    protected function getTemplateServiceForPageId(int $pageId): ExtendedTemplateService
+    {
+        $templateService = GeneralUtility::makeInstance(ExtendedTemplateService::class);
+
+        // Do not log time-performance information
+        $templateService->tt_track = 0;
+        $templateService->init();
+
+        // This generates the constants/config + hierarchy info for the template.
+        $templateService->runThroughTemplates(BackendUtility::BEgetRootLine($pageId), 0);
+        $templateService->generateConfig();
+
+        return $templateService;
     }
 }
