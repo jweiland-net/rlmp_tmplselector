@@ -22,8 +22,3 @@ templates instead of external HTML files. You should read the section in the tut
 a better idea of how this extension works, since everything will be explained there right from the
 start. Nevertheless you can also use this extension without reading the tutorial, since the most
 important steps will be explained here, too.
-
-.. warning::
-
-By the time there have been made several changes to the original extension from the tutorial,
-only trust this manual, some steps mentioned in the tutorial probably won't work!

@@ -6,30 +6,26 @@
 Configuration
 =============
 
-If your are a developer or webdesigner, please also read the section dealing with this extension
-in the tutorial Modern Template Building Part 1+2. It will give you some more background
-information regarding this extension.
-
-That means: Basically you have two options to work with the template selector, you can either
+Basically you have two options to work with the template selector, you can either
 put static HTML files into a certain directory and use them as a template or work with pure
 TypoScript which means you create cObjects of the type TEMPLATE.
 
 You have to decide which option you prefer, choosing any of them will be fine, but you can
-only work with either files or TypoScript objects.
+only work with either `files` or `TypoScript`.
 
 The external file way
 ---------------------
 
 If you prefer working with external HTML files, this is the section you have to read. First thing
-you have to do is define the paths which will hold your templates of both the main and the sub
-content. Just create some lines like these in the setup field of your root template:
+you have to do is define the paths which will hold your templates of both the `main` and the `sub`
+content. Just create some lines like these in the setup field of your TypoScript template:
 
 .. code-block:: typoscript
 
    tt_content.list.20.rlmptmplselector_templateselector.settings.templatePathMain = EXT:your_ext_key/Resources/Private/Templates/Main/
    tt_content.list.20.rlmptmplselector_templateselector.settings.templatePathSub = EXT:your_ext_key/Resources/Private/Templates/Sub/
 
-You can add new templates just by putting them into the main/ and sub/  directory. All files
+You can add new templates just by putting them into the `Main/` and `Sub/`  directory. All files
 with extension like ".htm" or ".html" will be recognized as a template file. Each template may
 be accompanied by an icon which will be shown in the template selector. It must have the same
 filename as the template file, with the extension ".gif" though. See the reference for
@@ -42,61 +38,62 @@ You don't like external HTML files? Prefer working with COAs, wraps and pure Typ
 Then this is the way you use the template selector:
 
 First you have to create your TS templates like you would normally without the template selector.
-Then copy the template objects into the template selector's configuration. Fix:
+Then copy the template objects into the template selector's configuration:
 
 .. code-block:: typoscript
 
-    temp.myFirstTemplate = TEMPLATE
-    temp.myFirstTemplate.template = COA
-    temp.myFirstTemplate.template {
-        10 = HTML
-        ...
-    }
+   temp.myFirstTemplate = TEMPLATE
+   temp.myFirstTemplate.tx_rlmptmplselector.title = My first template
+   temp.myFirstTemplate.tx_rlmptmplselector.imagefile = EXT:site_package/Resources/Public/Icons/First.svg
+   temp.myFirstTemplate.template = TEXT
+   temp.myFirstTemplate.template.value = <div>###CONTENT###</div>
 
-    temp.mySecondTemplate = TEMPLATE
-    temp.mySecondTemplate.template = COA
-    temp.mySecondTemplate.template {
-        10 = HTML
-        ...
-    }
+   temp.mySecondTemplate = FLUIDTEMPLATE
+   temp.mySecondTemplate.tx_rlmptmplselector.title = My second template
+   temp.mySecondTemplate.tx_rlmptmplselector.imagefile = EXT:site_package/Resources/Public/Icons/Second.svg
+   temp.mySecondTemplate.template = TEXT
+   temp.mySecondTemplate.template.value = <div>{content}</div>
 
-    plugin.tx_rlmptmplselector_pi1.templateObjects.main {
-        10 < temp.myFirstTemplate
-        20 < temp.mySecondTemplate
-    }
+   tt_content.list.20.rlmptmplselector_templateselector.settings.templateObjects.main {
+     10 < temp.myFirstTemplate
+     20 < temp.mySecondTemplate
+   }
 
 Got the idea? The templates you copy (or link) into templateObjects.main and templateObjects.sub
-will appear in the backend's template selector. You can also define a title and an icon for each
-template (and you should). You'll have to upload a .gif file into the resource section of your
-template (I expect your file to be in uploads/tf ) and tell the template selector the rest:
+will appear in the backend's template selector. You can also define a title and an icon path for each
+template (and you should).
 
-.. code-block:: typoscript
+Now the template selector appears in the backend and you easily can select templates. But how do you
+include the template selector into your website's TypoScript? Well, you just forward the template selector's
+output to your favourite page object.
 
-    temp.myFirstTemplate = TEMPLATE
-    temp.myFirstTemplate.tx_rlmptmplselector.title = First template
-    temp.myFirstTemplate.tx_rlmptmplselector.imagefile = myfirsticon.gif
-    temp.myFirstTemplate.template = COA
-    temp.myFirstTemplate.template {
-        10 = HTML
-        ...
-    }
-
-Invoking the template selector. Now the template selector appears in the backend and you easily
-can select templates. But how do you include the template selector into your website's
-TypoScript? Well, you just forward the template selector's output to your favourite page object.
 
 Example
 -------
 
 .. code-block:: typoscript
 
-    page = PAGE
-    page.typeNum = 0
-    page.10 < plugin.tx_rlmptmplselector_pi1
+   page = PAGE
+   page.typeNum = 0
 
-Getting started the easy way! You should definitely have a look at the samples/ folder in the
-extension's directory (see typo3conf/ext/rlmp_tmplselector). There are two .t3d files containing
-TypoScript templates which will show you how to successfully include the template selector. Have a look at the README file for more information.
+   tt_content.list.20.rlmptmplselector_templateselector.settings.templatePathMain = EXT:site_package/Resources/Private/RlmpTmplSelector/Main/
+   tt_content.list.20.rlmptmplselector_templateselector.settings.templatePathSub = EXT:site_package/Resources/Private/RlmpTmplSelector/Sub/
+
+   # No dynamic content. Just print content to page
+   page.10 < tt_content.list.20.rlmptmplselector_templateselector
+
+   # Template with dynamic content based on old TEMPLATE Content Object
+   page.20 = TEMPLATE
+   page.20.template < tt_content.list.20.rlmptmplselector_templateselector
+   page.20.marks.CONTENT = TEXT
+   page.20.marks.CONTENT.value = Good morning
+
+   # Template with dynamic content based on new FLUIDTEMPLATE Content Object
+   page.30 = FLUIDTEMPLATE
+   page.30.template < tt_content.list.20.rlmptmplselector_templateselector
+   page.30.variables.content = TEXT
+   page.30.variables.content.value = Good evening
+
 
 Reference
 ---------
@@ -176,7 +173,7 @@ Fx. if you created a TEMPLATE cObject like this:
 
 .. code-block:: typoscript
 
-    templateObjects.sub.10 = TEMPLATE
+   templateObjects.sub.10 = TEMPLATE
 
 Then it will automatically be selected if you set defaultTemplateObject to 10
 
@@ -192,7 +189,7 @@ Fx. if you created a TEMPLATE cObject like this:
 
 .. code-block:: typoscript
 
-    templateObjects.main.10 = TEMPLATE
+   templateObjects.main.10 = TEMPLATE
 
 Then it will automatically be selected if you set defaultTemplateObject to 10
 
