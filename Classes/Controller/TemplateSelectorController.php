@@ -139,10 +139,15 @@ class TemplateSelectorController extends ActionController
 
     protected function getSettings(): array
     {
-        return ArrayUtility::getValueByPath(
-            $this->getTypoScriptFrontendController()->tmpl->setup,
-            'tt_content./list./20./rlmptmplselector_templateselector./settings.'
-        );
+        try {
+            $settings = ArrayUtility::getValueByPath(
+                $this->getTypoScriptFrontendController()->tmpl->setup,
+                'tt_content./list./20./rlmptmplselector_templateselector./settings.'
+            );
+        } catch (\RuntimeException $e) {
+            $settings = [];
+        }
+        return $settings;
     }
 
     protected function getTypoScriptFrontendController(): TypoScriptFrontendController
