@@ -170,10 +170,15 @@ abstract class AbstractAddFiles
     protected function getSettings(int $pageId): array
     {
         $templateService = $this->getTemplateServiceForPageId($pageId);
-        return ArrayUtility::getValueByPath(
-            $templateService->setup,
-            'tt_content./list./20./rlmptmplselector_templateselector./settings.'
-        );
+        try {
+            $settings = ArrayUtility::getValueByPath(
+                $templateService->setup,
+                'tt_content./list./20./rlmptmplselector_templateselector./settings.'
+            );
+        } catch (\RuntimeException $e) {
+            $settings = [];
+        }
+        return $settings;
     }
 
     protected function getPageId(array $params): int
