@@ -6,6 +6,10 @@
 ChangeLog
 =========
 
+**Version 3.0.3**
+
+- With TYPO3 8.7.43 a new SimpleParser was introduced. As it needs strict types we have to update our code.
+
 **Version 3.0.1**
 
 - Check result of removeFirstAndLastTag to be string
