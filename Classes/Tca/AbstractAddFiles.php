@@ -153,17 +153,22 @@ abstract class AbstractAddFiles
 
     protected function buildTitleFromTemplateFile(string $templateFilePath): string
     {
+        // Set a title based on filename. Can be prefixed by a <title> tag, if found in template itself
+        $title = basename($templateFilePath);
+
+        // Try to get title from content of template
         $htmlParser = GeneralUtility::makeInstance(HtmlParser::class);
         $content = GeneralUtility::getUrl($templateFilePath);
-
-        // extract the content of the title-tags:
         $titleParts = $htmlParser->splitIntoBlock('title', $content);
-        $titleTagContent = trim($htmlParser->removeFirstAndLastTag($titleParts[1]) ?: '');
+        if (!empty($titleParts)) {
+            $titleTagContent = trim($htmlParser->removeFirstAndLastTag($titleParts[1] ?: '') ?: '');
 
-        $title = basename($templateFilePath);
-        if ($titleTagContent) {
-            $title = sprintf('%s (%s)', $titleTagContent, $title);
+            // If a title was found in template, set it as a prefix to filename
+            if ($titleTagContent) {
+                $title = sprintf('%s (%s)', $titleTagContent, $title);
+            }
         }
+
         return $title;
     }
 
