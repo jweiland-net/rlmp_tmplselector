@@ -4,7 +4,7 @@
 	"description": "Select different templates for each page or tree branch. Easily works with either external html templates or pure TypoScript templates! Modified version based on the Modern Template Building tutorial.",
 	"license": "GPL-2.0-or-later",
 	"keywords": ["typo3", "TYPO3 CMS", "template", "selector"],
-	"homepage": "http://www.jweiland.net",
+	"homepage": "https://jweiland.net",
 	"authors": [
 		{
 			"name": "Stefan Froemken",
@@ -24,6 +24,9 @@
 	"require-dev": {
 		"friendsofphp/php-cs-fixer": "^2.0",
 		"nimut/testing-framework": "^4.1"
+	},
+	"replace": {
+		"typo3-ter/rlmp_tmplselector": "self.version"
 	},
 	"autoload": {
 		"psr-4": {
