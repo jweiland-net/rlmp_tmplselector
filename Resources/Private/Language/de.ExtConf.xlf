@@ -3,9 +3,9 @@
   <file source-language="en" datatype="plaintext" original="messages" date="2019-10-28T10:08:22Z" product-name="rlmp_tmplselector" target-language="de">
     <header/>
     <body>
-      <trans-unit id="templateMode">
+      <trans-unit id="templateMode" approved="yes">
         <source>Template Selector Mode: You can use this extension either with HTML files or with pure TypoScript.</source>
-        <target state="needs-translation">Template Selector Mode: You can use this extension either with HTML files or with pure TypoScript.</target>
+        <target state="final">Template Selector Modus: Sie können diese Erweiterung entweder mit HTML-Dateien oder mit reinem TypoScript verwenden.</target>
       </trans-unit>
     </body>
   </file>
