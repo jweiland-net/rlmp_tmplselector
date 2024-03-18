@@ -3,21 +3,21 @@
   <file source-language="en" datatype="plaintext" original="messages" date="2015-11-20T08:49:22Z" product-name="rlmp_tmplselector" target-language="de">
     <header/>
     <body>
-      <trans-unit id="pages.tx_rlmptmplselector_main_tmpl">
+      <trans-unit id="pages.tx_rlmptmplselector_main_tmpl" approved="yes">
         <source>Select template:</source>
-        <target state="needs-translation">Select template:</target>
+        <target state="final">Vorlage auswählen:</target>
       </trans-unit>
-      <trans-unit id="pages.tx_rlmptmplselector_main_tmpl.I.0">
+      <trans-unit id="pages.tx_rlmptmplselector_main_tmpl.I.0" approved="yes">
         <source>Default</source>
-        <target state="needs-translation">Default</target>
+        <target state="final">Standard</target>
       </trans-unit>
-      <trans-unit id="pages.tx_rlmptmplselector_ca_tmpl">
+      <trans-unit id="pages.tx_rlmptmplselector_ca_tmpl" approved="yes">
         <source>Select content area template:</source>
-        <target state="needs-translation">Select content area template:</target>
+        <target state="final">Inhaltsbereichsvorlage auswählen:</target>
       </trans-unit>
-      <trans-unit id="pages.tx_rlmptmplselector_ca_tmpl.I.0">
+      <trans-unit id="pages.tx_rlmptmplselector_ca_tmpl.I.0" approved="yes">
         <source>Default</source>
-        <target state="needs-translation">Default</target>
+        <target state="final">Standard</target>
       </trans-unit>
     </body>
   </file>
