@@ -27,3 +27,9 @@ ggf. folgende Zeilen im PageTSconfig auskommentieren
 // TCEFORM.pages.tx_rlmptmplselector_main_tmpl.disabled = 1
 
 // TCEFORM.pages.tx_rlmptmplselector_ca_tmpl.removeItems = 0
+
+## Support
+
+Free Support is available via [GitHub Issue Tracker](https://github.com/jweiland-net/rlmp_tmplselector/issues).
+
+For commercial support, please contact us at [support@jweiland.net](support@jweiland.net).
