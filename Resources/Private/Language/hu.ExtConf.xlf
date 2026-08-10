@@ -5,7 +5,7 @@
     <body>
       <trans-unit id="templateMode">
         <source>Template Selector Mode: You can use this extension either with HTML files or with pure TypoScript.</source>
-        <target state="needs-translation">Template Selector Mode: You can use this extension either with HTML files or with pure TypoScript.</target>
+        <target state="translated">Sablonválasztó mód: Ez a bővítmény használható HTML-fájlokkal vagy tiszta TypoScripttal is.</target>
       </trans-unit>
     </body>
   </file>
