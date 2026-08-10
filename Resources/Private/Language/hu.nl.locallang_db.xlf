@@ -5,19 +5,19 @@
     <body>
       <trans-unit id="pages.tx_rlmptmplselector_main_tmpl">
         <source>Select template:</source>
-        <target state="needs-translation">Select template:</target>
+        <target state="translated">Sablon kiválasztása:</target>
       </trans-unit>
       <trans-unit id="pages.tx_rlmptmplselector_main_tmpl.I.0">
         <source>Default</source>
-        <target state="needs-translation">Default</target>
+        <target state="translated">Alapértelmezett</target>
       </trans-unit>
       <trans-unit id="pages.tx_rlmptmplselector_ca_tmpl">
         <source>Select content area template:</source>
-        <target state="needs-translation">Select content area template:</target>
+        <target state="translated">Tartalmi terület sablonjának kiválasztása:</target>
       </trans-unit>
       <trans-unit id="pages.tx_rlmptmplselector_ca_tmpl.I.0">
         <source>Default</source>
-        <target state="needs-translation">Default</target>
+        <target state="translated">Alapértelmezett</target>
       </trans-unit>
     </body>
   </file>
